@@ -66,30 +66,50 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("could not get token: %v", err))
 	}
+	/*
+	 */
 
 	// Add users to keycloak
+	// OLD: first name,last name,email,password,organization,learn group
+	// HEADER: user_login,user_email,first_name,last_name,user_pass,wp_role,learndash_courses,learndash_groups,display_name,group_leader
 	fmt.Println("Creating users:")
 	badcreates := make([]error, 0)
 	for _, user := range users[1:] {
-		fmt.Println("  ", user[2])
+		fmt.Print("  ", user[1])
 		toCreate := gocloak.User{
-			FirstName:     gocloak.StringP(user[0]),
-			LastName:      gocloak.StringP(user[1]),
-			Email:         gocloak.StringP(user[2]),
-			Username:      gocloak.StringP(user[2]),
+			FirstName:     gocloak.StringP(user[2]),
+			LastName:      gocloak.StringP(user[3]),
+			Email:         gocloak.StringP(user[1]),
+			Username:      gocloak.StringP(user[0]),
 			Enabled:       gocloak.BoolP(true),
 			EmailVerified: gocloak.BoolP(true),
+			// RequiredActions: &[]string{"terms_and_conditions", "UPDATE_PASSWORD"},
 			Credentials: &[]gocloak.CredentialRepresentation{{
 				CreatedDate: gocloak.Int64P(time.Now().Unix()),
 				Temporary:   gocloak.BoolP(true),
 				Type:        gocloak.StringP("password"),
-				Value:       gocloak.StringP(user[3]),
+				Value:       gocloak.StringP(user[4]),
 			}},
 		}
+		// fmt.Printf("%+v\n", &toCreate)
 
-		if _, err = client.CreateUser(ctx, tokenResp.AccessToken, cfg.Keycloak.Realm, toCreate); err != nil {
-			badcreates = append(badcreates, fmt.Errorf("%s: %v", user[2], err))
+		createdID, err := client.CreateUser(ctx, tokenResp.AccessToken, cfg.Keycloak.Realm, toCreate)
+		if err != nil {
+			badcreates = append(badcreates, fmt.Errorf("%s: %v", user[1], err))
+			fmt.Println(" [ERROR]")
+		} else {
+			fmt.Printf(" [%s]\n", createdID)
+
+			// Now remove the Verify Email action
+			created := toCreate
+			created.ID = gocloak.StringP(createdID)
+			created.RequiredActions = &[]string{"terms_and_conditions", "UPDATE_PASSWORD"}
+			if err := client.UpdateUser(ctx, tokenResp.AccessToken, cfg.Keycloak.Realm, created); err != nil {
+				badcreates = append(badcreates, fmt.Errorf("%s: %v", user[1], err))
+			}
 		}
+		/*
+		 */
 	}
 
 	// TODO: add to organization

@@ -1,2 +1,2 @@
-*.yaml
-*.csv
+**/*.yaml
+**/*.csv
