@@ -1,4 +1,4 @@
-module github.com/hokiegeek/keycloak-users-bulk-add
+module github.com/hokiegeek/add-to-innovators
 
 go 1.18
 
@@ -8,6 +8,8 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/goccy/go-yaml v1.9.5 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
