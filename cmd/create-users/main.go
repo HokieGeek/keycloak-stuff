@@ -5,7 +5,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 
@@ -37,7 +37,7 @@ func main() {
 	}
 	defer configFile.Close()
 
-	buf, err := ioutil.ReadAll(configFile)
+	buf, err := io.ReadAll(configFile)
 	if err != nil {
 		panic(err)
 	}
@@ -66,8 +66,19 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("could not get token: %v", err))
 	}
+
 	/*
-	 */
+		// Load the config
+		cfg, err := keycloak_stuff.LoadConfigFromFile(*configFilePtr)
+		if err != nil {
+			panic(err)
+		}
+
+		k, err := keycloak_stuff.New(cfg)
+		if err != nil {
+			panic(err)
+		}
+	*/
 
 	// Add users to keycloak
 	// OLD: first name,last name,email,password,organization,learn group

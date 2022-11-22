@@ -1,4 +1,4 @@
-module github.com/hokiegeek/add-to-innovators
+module github.com/hokiegeek/keycloak-stuff
 
 go 1.18
 
